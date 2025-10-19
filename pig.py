@@ -53,9 +53,12 @@ class PlayerFactory:  # This class creates player objects using the Factory Patt
 class PigGame:  # This class controls the overall game flow
     WINNING_SCORE = 100
 
-    def __init__(self, p1_name="Player 1", p2_name="Player 2"):
+    def __init__(self, player1_type="human", player2_type="computer"):
         self.die = Die()
-        self.players = [Player(p1_name), Player(p2_name)]
+        self.players = [
+            PlayerFactory.create_player(player1_type, "Player 1"),
+            PlayerFactory.create_player(player2_type, "Player 2")
+        ]
         self.turn_index = 0
 
     def switch_player(self):  # This is logic to switch to next player
@@ -64,31 +67,25 @@ class PigGame:  # This class controls the overall game flow
     def get_current_player(self):  # Ths returns whose turn it is
         return self.players[self.turn_index]
 
-    def play_turn(self):  # This is one full turn
+    def play_turn(self):  # This handles one full turn for a player
         player = self.get_current_player()
         turn_total = 0
         print(f"\n--- {player.name}'s turn ---")
-
         while True:
-            choice = input("Enter 'r' to roll or 'h' to hold: ").lower()
-            if choice == 'r':
+            if player.wants2roll(turn_total):
                 roll = self.die.roll()
                 print(f"{player.name} rolled a {roll}.")
-
                 if roll == 1:
-                    print("OOPS! You rolled a 1. No points this turn. Sorry! =(")
+                    print("OOPS! You rolled a 1. No points this turn. Sorry!")
                     turn_total = 0
                     break
                 else:
                     turn_total += roll
-                    print(f"Turn total= {turn_total}, Current total score= {player.total_score}")
-            elif choice == 'h':
+                    print(f"Turn total = {turn_total}, Current total score = {player.total_score}")
+            else:
                 player.add_pts(turn_total)
                 print(f"{player.name} holds. Turn total {turn_total} added to score.")
                 break
-            else:
-                print("Try again, your input is invalid my friend. Please enter 'r' or 'h'.")
-
         print(f"{player.name}'s total score: {player.total_score}\n")
         self.switch_player()
 
