@@ -21,11 +21,34 @@ class Player:
     def add_pts(self, pts):  # This adds points to the score
         self.total_score += pts
 
-    def wants_to_roll(self, turn_total):
+    def wants2roll(self, turn_total):  # This will be defined by subclasses
         raise NotImplementedError
 
     def __str__(self):
         return f"{self.name}: {self.total_score} points"
+"""---------------------------------------------------------------------------------"""
+class human(Player):  # This represents a human player
+    def wants2roll(self, turn_total):
+        while True:
+            choice = input("Enter 'r' to roll or 'h' to hold: ").lower()
+            if choice in ['r', 'h']:
+                return choice == 'r'
+            print("Invalid input. Please enter 'r' or 'h'.")
+"""---------------------------------------------------------------------------------"""
+class robot(Player):  # This represents a computer player
+    def wants2roll(self, turn_total):
+        threshold = min(25, 100 - self.total_score) # This is logic that makes the computer hold after 25 pts
+        return turn_total < threshold               # or maybe less if it needs <25 pts
+"""---------------------------------------------------------------------------------"""
+class PlayerFactory:  # This class creates player objects using the Factory Pattern
+    @staticmethod
+    def create_player(player_type, name):
+        if player_type.lower() == "human":
+            return human(name)
+        elif player_type.lower() == "computer":
+            return robot(name)
+        else:
+            raise ValueError("Invalid player type. Use 'human' or 'computer'.")
 """---------------------------------------------------------------------------------"""
 class PigGame:  # This class controls the overall game flow
     WINNING_SCORE = 100
