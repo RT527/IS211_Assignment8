@@ -104,7 +104,46 @@ class PigGame:  # This class controls the overall game flow
             self.play_turn()
         print("\nGame over! Thanks for playing.")
 """---------------------------------------------------------------------------------"""
-if __name__ == "__main__":
-    game = PigGame()
-    game.play()
+class timed:  # This adds a 1-minute time limit
+    TIME_LIMIT = 60
+    def __init__(self, real_game):
+        self.real_game = real_game
+
+    def play(self):
+        start_time = time.time()
+        print("Timed mode active! You have 1 minute to win.\n")
+
+        while not self.real_game.is_game_over():
+            elapsed = time.time() - start_time
+            if elapsed >= self.TIME_LIMIT:
+                print("\nTime is up! Checking scores...")
+                self.winner_is()
+                return
+            self.real_game.play_turn()
+        print("\nGame over! Thanks for playing.")
+
+    def winner_is(self):  # This decides who wins when time is up
+        p1, p2 = self.real_game.players
+        if p1.total_score > p2.total_score:
+            print(f"{p1.name} wins with {p1.total_score} points!")
+        elif p2.total_score > p1.total_score:
+            print(f"{p2.name} wins with {p2.total_score} points!")
+        else:
+            print("It's a tie!")
+"""---------------------------------------------------------------------------------"""
+if __name__ == "__main__":  # This runs the program if executed directly
+    parser = argparse.ArgumentParser(description="Play the Pig Game with New Features")
+    parser.add_argument("--player1", type=str, default="human", help="Type for Player 1: human or computer")
+    parser.add_argument("--player2", type=str, default="computer", help="Type for Player 2: human or computer")
+    parser.add_argument("--timed", action="store_true", help="Play the 1-minute timed version")
+
+    args = parser.parse_args()
+
+    game = PigGame(args.player1, args.player2)
+
+    if args.timed:
+        proxy = timed(game)
+        proxy.play()
+    else:
+        game.play()
 """---------------------------------------------------------------------------------"""
