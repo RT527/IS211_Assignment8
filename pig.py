@@ -1,10 +1,10 @@
 # Rafi Talukder Assignment_8
 import random  # This is for random number 1-6 generation for die
-
+import argparse
+import time
+"""---------------------------------------------------------------------------------"""
 random.seed(0)  # This sets a fixed seed for reproducible results
 """---------------------------------------------------------------------------------"""
-
-
 class Die:  # This represents a single die with 6 sides 1-6
     def __init__(self):
         self.value = 1
@@ -12,11 +12,7 @@ class Die:  # This represents a single die with 6 sides 1-6
     def roll(self):
         self.value = random.randint(1, 6)  # This rolls dice and gives us a value between 1 and 6
         return self.value
-
-
 """---------------------------------------------------------------------------------"""
-
-
 class Player:
     def __init__(self, name):  # This represents a player in game
         self.name = name
@@ -25,13 +21,12 @@ class Player:
     def add_pts(self, pts):  # This adds points to the score
         self.total_score += pts
 
+    def wants_to_roll(self, turn_total):
+        raise NotImplementedError
+
     def __str__(self):
         return f"{self.name}: {self.total_score} points"
-
-
 """---------------------------------------------------------------------------------"""
-
-
 class PigGame:  # This class controls the overall game flow
     WINNING_SCORE = 100
 
@@ -88,8 +83,6 @@ class PigGame:  # This class controls the overall game flow
         while not self.is_game_over():
             self.play_turn()
         print("\nGame over! Thanks for playing.")
-
-
 """---------------------------------------------------------------------------------"""
 if __name__ == "__main__":
     game = PigGame()
